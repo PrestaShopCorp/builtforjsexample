@@ -1,5 +1,3 @@
-# builtforjsexample
-
 # Example with PrestaShop Integration Framework Components
 
 ## Installation
