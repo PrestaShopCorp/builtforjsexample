@@ -1,0 +1,51 @@
+services:
+
+  builtforjsexample.module:
+    class: BuiltForJsExample
+    public: true
+    factory: ['Module', 'getInstanceByName']
+    arguments:
+      - 'builtforjsexample'
+
+  builtforjsexample.context:
+    class: Context
+    public: true
+    factory: [ 'Context', 'getContext' ]
+    
+  #####################
+  # PS Account
+  builtforjsexample.ps_accounts_installer:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
+    public: true
+    arguments:
+      - "5.0"
+
+  builtforjsexample.ps_accounts_facade:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
+    public: true
+    arguments:
+      - "@builtforjsexample.ps_accounts_installer"
+
+  #####################
+  # PS Billing
+  builtforjsexample.ps_billings_context_wrapper:
+    class: 'PrestaShopCorp\Billing\Wrappers\BillingContextWrapper'
+    arguments:
+      - '@builtforjsexample.ps_accounts_facade'
+      - '@builtforjsexample.context'
+      - true # if true you are in sandbox mode, if false or empty not in sandbox
+
+  builtforjsexample.ps_billings_facade:
+    class: 'PrestaShopCorp\Billing\Presenter\BillingPresenter'
+    public: true
+    arguments:
+      - '@builtforjsexample.ps_billings_context_wrapper'
+      - '@builtforjsexample.module'
+
+  # Remove this if you don't need BillingService
+  builtforjsexample.ps_billings_service:
+    class: PrestaShopCorp\Billing\Services\BillingService
+    public: true
+    arguments:
+      - '@builtforjsexample.ps_billings_context_wrapper'
+      - '@builtforjsexample.module'
