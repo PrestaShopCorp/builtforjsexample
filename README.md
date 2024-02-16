@@ -15,7 +15,6 @@ composer install --no-dev -o
 - Remove old dependencies in composer.json
 - Update [prestashop/module-lib-mbo-installer](https://github.com/PrestaShopCorp/module-lib-mbo-installer) to version 1.0
 - Add new dependency management system
-- Add [php-scoper](https://github.com/humbug/php-scoper) to resolve composer dependency conflicts with other modules
 
 ### v1.0.0
 
