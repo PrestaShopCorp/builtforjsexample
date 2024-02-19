@@ -24,6 +24,7 @@
 *}
 
 <prestashop-accounts></prestashop-accounts>
+<br>
 <div id="prestashop-cloudsync"></div>
 
 <div id="ps-billing"></div>

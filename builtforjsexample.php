@@ -24,6 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
+use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 
 if (!defined('_PS_VERSION_')) {
@@ -45,7 +46,7 @@ class BuiltForJsExample extends Module
     {
         $this->name = 'builtforjsexample';
         $this->tab = 'administration';
-        $this->version = '1.0.0';
+        $this->version = '2.0.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
@@ -56,7 +57,8 @@ class BuiltForJsExample extends Module
         $this->displayName = $this->l('Example module with all PrestaShop Integration Framework');
         $this->description = $this->l('Module using PrestaShop Account, PrestaShop Billing and PrestaShop CloudSync.');
 
-        $this->ps_versions_compliancy = array('min' => '1.7.0', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.7.5', 'max' => _PS_VERSION_);
+        $this->php_versions_compliancy = array('min' => '7.2');
 
         if ($this->container === null) {
             $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
@@ -68,59 +70,7 @@ class BuiltForJsExample extends Module
 
     public function install()
     {
-        // Test if MBO is installed
-        // For more information, check the readme of mbo-lib-installer
-        $mboStatus = (new Prestashop\ModuleLibMboInstaller\Presenter)->present();
-
-        if(!$mboStatus["isInstalled"])
-        {
-            try {
-                $mboInstaller = new Prestashop\ModuleLibMboInstaller\Installer(_PS_VERSION_);
-                /** @var boolean */
-               $result = $mboInstaller->installModule();
-
-               // Call the installation of PrestaShop Integration Framework components
-               $this->installDependencies();
-            } catch (\Exception $e) {
-                // Some errors can happen, i.e during initialization or download of the module
-                $this->context->controller->errors[] = $e->getMessage();
-                return 'Error during MBO installation';
-            }
-        }
-        else {
-            $this->installDependencies();
-        }
-
         return parent::install();
-    }
-
-
-    /**
-     * Install PrestaShop Integration Framework Components
-     */
-    public function installDependencies()
-    {
-        $moduleManager = ModuleManagerBuilder::getInstance()->build();
-
-        /* PS Account */
-        if (!$moduleManager->isInstalled("ps_accounts")) {
-            $moduleManager->install("ps_accounts");
-        } else if (!$moduleManager->isEnabled("ps_accounts")) {
-            $moduleManager->enable("ps_accounts");
-            $moduleManager->upgrade('ps_accounts');
-        } else {
-            $moduleManager->upgrade('ps_accounts');
-        }
-
-        /* Cloud Sync - PS Eventbus */
-        if (!$moduleManager->isInstalled("ps_eventbus")) {
-            $moduleManager->install("ps_eventbus");
-        } else if (!$moduleManager->isEnabled("ps_eventbus")) {
-            $moduleManager->enable("ps_eventbus");
-            $moduleManager->upgrade('ps_eventbus');
-        } else {
-            $moduleManager->upgrade('ps_eventbus');
-        }
     }
 
     public function uninstall()
@@ -133,6 +83,19 @@ class BuiltForJsExample extends Module
      */
     public function getContent()
     {
+
+        # Load dependencies manager
+        $mboInstaller = new \Prestashop\ModuleLibMboInstaller\DependencyBuilder($this);
+
+        if( !$mboInstaller->areDependenciesMet() )
+        {
+            $dependencies = $mboInstaller->handleDependencies();
+
+            $this->smarty->assign('dependencies', $dependencies);
+
+            return $this->display(__FILE__, 'views/templates/admin/dependency_builder.tpl');
+        }
+
         $this->context->smarty->assign('module_dir', $this->_path);
         $moduleManager = ModuleManagerBuilder::getInstance()->build();
 
