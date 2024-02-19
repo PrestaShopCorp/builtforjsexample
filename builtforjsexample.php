@@ -57,7 +57,8 @@ class BuiltForJsExample extends Module
         $this->displayName = $this->l('Example module with all PrestaShop Integration Framework');
         $this->description = $this->l('Module using PrestaShop Account, PrestaShop Billing and PrestaShop CloudSync.');
 
-        $this->ps_versions_compliancy = array('min' => '1.7.0', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.7.5', 'max' => _PS_VERSION_);
+        $this->php_versions_compliancy = array('min' => '7.2');
 
         if ($this->container === null) {
             $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
