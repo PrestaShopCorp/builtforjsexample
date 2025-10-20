@@ -26,6 +26,7 @@
 
 use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
+use PrestaShop\Module\Builtforjsexample\Services\PrestashopModuleTracking;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,6 +42,7 @@ class BuiltForJsExample extends Module
     protected $config_form = false;
 
     private $container;
+    private $segmentWriteKey = '';
 
     public function __construct()
     {
@@ -70,12 +72,57 @@ class BuiltForJsExample extends Module
 
     public function install()
     {
-        return parent::install();
+        if (!parent::install()) {
+            return false;
+        }
+
+        $this->trackModuleEvent('Module Installed');
+
+        return true;
     }
 
     public function uninstall()
     {
-        return parent::uninstall();
+        if (!parent::uninstall()) {
+            return false;
+        }
+
+        $this->trackModuleEvent('Module Uninstalled');
+
+        return true;
+    }
+
+    public function enable($force_all = false)
+    {
+        if(!parent::enable($force_all)){
+            return false;
+        }
+
+        $this->trackModuleEvent('Module Enabled');
+
+        return true;
+    }
+
+    public function disable($force_all = false)
+    {
+        if (!parent::disable($force_all)) {
+            return false;
+        }
+        
+        $this->trackModuleEvent('Module Disabled');
+
+        return true;
+    }
+
+    public function runUpgradeModule()
+    {
+        if (!parent::runUpgradeModule()) {
+            return false;
+        }
+
+        $this->segmentTrack('Module Upgraded');
+
+        return true;
     }
 
     /**
@@ -125,6 +172,12 @@ class BuiltForJsExample extends Module
             return '';
         }
 
+        if (\Tools::isSubmit('submit' . $this->name)) {
+            // implement parameters if needed
+            $params = [];
+            $this->trackModuleEvent('Module Configured', $params);
+        }
+
         if ($moduleManager->isInstalled("ps_eventbus")) {
             $eventbusModule =  \Module::getInstanceByName("ps_eventbus");
             if (version_compare($eventbusModule->version, '1.9.0', '>=')) {
@@ -172,4 +225,15 @@ class BuiltForJsExample extends Module
     {
         return $this->container->getService($serviceName);
     }
+
+    protected function trackModuleEvent($eventName, array $properties = [])
+    {
+        PrestashopModuleTracking::track(
+            $this->segmentWriteKey,
+            $this,
+            $eventName,
+            $properties
+        );
+    }
+
 }
