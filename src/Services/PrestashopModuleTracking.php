@@ -87,6 +87,10 @@ class PrestashopModuleTracking
             return;
         }
 
+        if (!defined('_PS_MODE_DEV_') || !_PS_MODE_DEV_) {
+            return;
+        }
+
         \PrestaShopLogger::addLog(
             sprintf('[Tracking][%s] %s | Context: %s', $module->name, $message, json_encode($context)),
             1,
