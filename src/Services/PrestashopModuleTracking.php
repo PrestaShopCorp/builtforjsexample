@@ -30,9 +30,11 @@ class PrestashopModuleTracking
             'module_version' => property_exists($module, 'version') ? $module->version : '',
         ];
 
-        $properties = array_merge($baseProperties, $properties);
+        if(!empty($properties)){
+            $baseProperties['custom'] = $properties;
+        }
 
-        self::log($module, sprintf('Preparing "%s" tracking.', $eventName), $properties);
+        self::log($module, sprintf('Preparing "%s" tracking.', $eventName), $baseProperties);
 
         try {
             if (method_exists($module, 'getService')) {
@@ -40,7 +42,7 @@ class PrestashopModuleTracking
                 $accountsFacade = $module->getService($serviceName);
                 if ($accountsFacade && method_exists($accountsFacade, 'getPsAccountsService')) {
                     $psAccountsService = $accountsFacade->getPsAccountsService();
-                    $properties = array_merge($properties, [
+                    $baseProperties = array_merge($baseProperties, [
                         'user_id' => $psAccountsService->getUserUuid(),
                         'email' => $psAccountsService->getEmail(),
                         'shop_id' => $psAccountsService->getShopUuid(),
@@ -59,14 +61,14 @@ class PrestashopModuleTracking
                 \Segment::track([
                     'anonymousId' => $module->name,
                     'event' => $eventName,
-                    'properties' => $properties,
+                    'properties' => $baseProperties,
                 ]);
             } elseif (class_exists('\\Segment\\Segment')) {
                 \Segment\Segment::init($apiKey);
                 \Segment\Segment::track([
                     'anonymousId' => $module->name,
                     'event' => $eventName,
-                    'properties' => $properties,
+                    'properties' => $baseProperties,
                 ]);
             } else {
                 self::log($module, 'Segment library not available, aborting track call.');
