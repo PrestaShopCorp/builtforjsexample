@@ -48,7 +48,7 @@ class BuiltForJsExample extends Module
     {
         $this->name = 'builtforjsexample';
         $this->tab = 'administration';
-        $this->version = '2.0.0';
+        $this->version = '3.0.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
@@ -209,6 +209,7 @@ class BuiltForJsExample extends Module
         ]));
 
         $this->context->smarty->assign('urlBilling', "https://unpkg.com/@prestashopcorp/billing-cdc/dist/bundle.js");
+
 
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
         return $output;

@@ -10,6 +10,12 @@ composer install --no-dev -o
 
 ## Changelog
 
+### v3.0.0
+
+- Update [prestashop/module-lib-mbo-installer](https://github.com/PrestaShopCorp/module-lib-mbo-installer) to version 3.0
+- Update [prestashopcorp/module-lib-billing](https://github.com/PrestaShopCorp/module-lib-billing) to version 4.0
+- Update [prestashop/module-lib-service-container](https://github.com/PrestaShopCorp/module-lib-service-container) to version 2.0
+
 ### v2.0.0
 
 - Remove old dependencies in composer.json
