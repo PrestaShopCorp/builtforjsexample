@@ -12,11 +12,18 @@
   "require": {
     "php": ">=7.2",
     "prestashop/prestashop-accounts-installer": "^1.0",
+    "prestashop/module-lib-service-container": "^1.4",
+    "prestashopcorp/module-lib-billing": "^3",
+    "prestashop/module-lib-mbo-installer": "^1.0",
+    "segmentio/analytics-php": "^1.8"
     "prestashop/module-lib-service-container": "^2.0",
     "prestashopcorp/module-lib-billing": "^4.0",
     "prestashop/module-lib-mbo-installer": "^3.0"
   },
   "autoload": {
+    "psr-4": {
+      "PrestaShop\\Module\\Builtforjsexample\\": "src/"
+    },
     "classmap": [
       "builtforjsexample.php"
     ]
